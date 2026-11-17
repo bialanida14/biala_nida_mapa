@@ -36,7 +36,6 @@
       await configureLocalTiles();
       initUi();
       refreshAll();
-      map.fitBounds(allBounds.pad(.08),{animate:false,padding:[30,30]});
       status('Mapa gotowa · '+parcels.length+' działek · lokalna ortofotomapa');
       setTimeout(() => { if($('mapStatus').textContent.startsWith('Mapa gotowa'))$('mapStatus').textContent = 'Kliknij działkę, aby zobaczyć jej szczegóły'; }, 3500);
     } catch(err) {
@@ -48,6 +47,11 @@
 
   function initMap() {
     map = L.map('map',{zoomControl:true,preferCanvas:true,zoomSnap:.5,maxZoom:21});
+    // Leaflet wymaga ustawionego widoku ZANIM dołączymy warstwy kafelkowe.
+    // Wyznaczamy go bezpośrednio z geometrii 226 działek.
+    const initialBounds = L.geoJSON({type:'FeatureCollection',features:parcels}).getBounds();
+    if (!initialBounds.isValid()) throw new Error('Niepoprawna geometria działek.');
+    map.fitBounds(initialBounds.pad(.08),{animate:false,padding:[30,30]});
     basemaps.ortho = L.tileLayer.wms('https://mapy.geoportal.gov.pl/wss/service/PZGIK/ORTO/WMS/StandardResolution',{
       layers:'Raster',format:'image/jpeg',transparent:false,version:'1.3.0',maxZoom:21,
       updateWhenIdle:true,keepBuffer:2,attribution:'Ortofotomapa © GUGiK / Geoportal'

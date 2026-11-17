@@ -6,11 +6,11 @@
 
 1. Zachowaj lokalną kopię dotychczasowego repozytorium i sprawdź, jakie dane wolno udostępnić publicznie.
 2. Rozpakuj archiwum. Wejdź do katalogu `Biala_Nida_GitHub_Pages_GOTOWE`.
-3. Otwórz https://github.com/bialanida14/biala-nida-mapa (jeśli ten adres jest nadal aktualny).
+3. Otwórz https://github.com/bialanida14/biala_nida_mapa (jeśli ten adres jest nadal aktualny).
 4. W zakładce **Code** wybierz **Add file → Upload files**, przeciągnij pliki **oraz foldery z wnętrza rozpakowanego katalogu** na stronę. `index.html` musi leżeć w głównym katalogu repozytorium, a nie wewnątrz podfolderu.
 5. Wybierz **Commit changes**. Jeśli GitHub odmówi przesłania folderów w przeglądarce, użyj GitHub Desktop i skopiuj zawartość archiwum do lokalnego klonu repozytorium (potem Commit i Push).
 6. Wejdź w **Settings → Pages → Build and deployment**. Źródło: **Deploy from a branch**; gałąź: `main`; folder: `/(root)`; Save, jeśli nie ustawiono wcześniej.
-7. Otwórz https://bialanida14.github.io/biala-nida-mapa/ i sprawdź checklistę z `TEST_PO_PUBLIKACJI.md`.
+7. Otwórz https://bialanida14.github.io/biala_nida_mapa/ i sprawdź checklistę z `TEST_PO_PUBLIKACJI.md`.
 
 Jeśli serwis jest już skonfigurowany, zazwyczaj wystarczy zastąpienie plików i commit.
 

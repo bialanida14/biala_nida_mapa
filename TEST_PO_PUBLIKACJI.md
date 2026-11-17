@@ -1,6 +1,6 @@
 # Lista kontroli po publikacji
 
-- [ ] Strona otwiera się pod https://bialanida14.github.io/biala-nida-mapa/
+- [ ] Strona otwiera się pod https://bialanida14.github.io/biala_nida_mapa/
 - [ ] Licznik pokazuje 226 działek
 - [ ] Ortofotomapa wyświetla się i pokrywa się z granicami działek
 - [ ] Zoom działa, a linie pozostają cienkie

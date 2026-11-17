@@ -1,0 +1,4 @@
+POPRAWKA v20: naprawiono błąd Leaflet "Set map center and zoom first".
+Na GitHubie wystarczy podmienić dwa pliki: index.html oraz assets/app.js (z zachowaniem struktury folderów).
+Adres: https://github.com/bialanida14/biala_nida_mapa
+Po publikacji odśwież Ctrl+F5.
