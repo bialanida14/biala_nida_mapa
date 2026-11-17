@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#102c35">
+<meta name="description" content="Biała Nida — interaktywna mapa 226 działek, wyszukiwanie, warstwy przestrzenne i zestawienia gruntów.">
+<title>Biała Nida — Mapa działek i panel nieruchomości</title>
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
+<link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet">
+<link href="assets/style.css" rel="stylesheet">
+<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script defer src="assets/mapa-v21.js"></script>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="topbrand"><div class="brand-icon" aria-hidden="true">BN</div><div class="brand-text"><span class="eyebrow">PORTFEL GRUNTÓW</span><strong>Biała Nida</strong></div></div>
+    <div class="top-subtitle">Panel nieruchomości <span class="top-divider"></span> Mapa inwestycyjna</div>
+    <div class="top-actions"><span class="connection"><span class="connection-dot"></span>Wersja WWW</span><button id="helpBtn" class="icon-btn" title="Informacje o mapie" aria-label="Informacje o mapie">?</button><button id="mobilePanel" class="icon-btn mobile-toggle" aria-label="Pokaż panel działek">☰</button></div>
+  </header>
+  <aside class="sidebar" id="sidebar" aria-label="Panel zarządzania działkami">
+    <div class="sidebar-top">
+      <div class="section-label">PORTFEL NIERUCHOMOŚCI</div>
+      <h1>Przegląd działek</h1>
+      <p>Wyszukuj, porównuj i twórz zestawienia gruntów.</p>
+      <div class="stats">
+        <div class="stat"><span>Działki</span><strong id="totalCount">—</strong></div>
+        <div class="stat"><span>Znana pow. łączna</span><strong id="totalArea">—</strong><small>ha</small></div>
+      </div>
+      <div id="dataNotice" class="data-notice" hidden></div>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Zakładki panelu">
+      <button id="tabAll" class="tab active" role="tab" aria-selected="true">Działki</button>
+      <button id="tabSelected" class="tab" role="tab" aria-selected="false">Wybrane <span id="selectedBadge" class="count-badge">0</span></button>
+    </div>
+    <div class="sidebar-scroll">
+      <section id="allPanel">
+        <label class="control-label" for="search">Znajdź działkę</label>
+        <div class="search-wrapper"><span aria-hidden="true">⌕</span><input id="search" type="search" autocomplete="off" placeholder="Numer, identyfikator, obręb..."></div>
+        <div class="control-heading"><span>Obręby ewidencyjne</span><button id="allRegions" class="link-action">Wszystkie</button></div>
+        <div id="regions" class="regions"></div>
+        <div class="filter-grid">
+          <div><label class="control-label" for="minArea">Minimum powierzchni (ha)</label><input type="number" id="minArea" min="0" step="0.01" value="0" placeholder="0"></div>
+          <div><label class="control-label" for="sort">Sortowanie</label><select id="sort"><option value="region">Obręb i numer</option><option value="areaDesc">Największe</option><option value="areaAsc">Najmniejsze</option></select></div>
+        </div>
+        <div class="results-header"><div><strong id="resultsCount">—</strong><span> wyników</span></div><button id="resetFilters" class="link-action">Reset filtrów</button></div>
+        <div class="list" id="parcelList"></div>
+      </section>
+      <section id="selectedPanel" hidden>
+        <div class="selection-summary"><div><span>Wybrane działki</span><strong id="selectionCount">0</strong></div><div><span>Powierzchnia znana</span><strong id="selectionArea">0 ha</strong></div></div>
+        <p class="muted-note">Zaznaczaj działki na mapie lub przyciskiem „+” na liście. To wirtualna grupa — nie oznacza formalnego scalenia.</p>
+        <div class="selection-actions"><button id="fitSelected" class="button button-primary">Pokaż na mapie</button><button id="downloadCsv" class="button button-light">Eksport CSV</button></div>
+        <button id="clearSelected" class="button button-quiet">Wyczyść zaznaczenie</button>
+        <div class="list" id="selectedList"></div>
+      </section>
+    </div>
+    <div class="sidebar-footer"><div><span class="legend-dot"></span><span>Granice ewidencyjne — materiał poglądowy</span></div><small>Przed decyzją inwestycyjną sprawdź aktualne dane urzędowe i stan prawny.</small></div>
+  </aside>
+  <main class="map-area">
+    <div id="map" aria-label="Mapa działek Biała Nida"></div>
+    <div class="map-overlay overlay-topright">
+      <div class="map-controls">
+        <label class="control-label" for="basemap">Podkład mapy</label>
+        <select id="basemap"><option value="local">Ortofotomapa HD (lokalna)</option><option value="ortho">Ortofotomapa Geoportal (online)</option><option value="osm">Mapa ulic OSM</option></select>
+        <button id="fitAll" class="square-button" title="Pokaż wszystkie działki" aria-label="Pokaż wszystkie działki">⛶</button>
+      </div>
+      <div class="map-controls map-controls-secondary"><button id="layersToggle" class="layer-trigger" aria-expanded="false">▧ <span>Warstwy mapy</span> <span id="layerChevron">⌄</span></button>
+        <div id="layersPanel" class="layers-panel" hidden>
+          <div class="layers-title">Warstwy tematyczne</div>
+          <label class="layer-option"><input id="labelToggle" type="checkbox" checked><span>Numery działek</span></label>
+          <label class="layer-option"><input id="zoneToggle" type="checkbox"><span>Strefa 100 m (poglądowa)</span></label>
+          <label class="layer-option"><input id="habitatToggle" type="checkbox"><span>Natura 2000 — siedliska</span></label>
+          <label class="layer-option"><input id="birdsToggle" type="checkbox"><span>Natura 2000 — ptaki</span></label>
+          <label class="layer-option"><input id="cadToggle" type="checkbox"><span>Granice okolicy (online)</span></label>
+          <div class="layer-note">Warstwy WMS wymagają internetu. Brak wyniku nie potwierdza braku ograniczeń.</div>
+        </div>
+      </div>
+    </div>
+    <div class="map-overlay overlay-bottomleft"><div class="map-legend"><span class="legend-title">OBRĘBY</span><div id="mapLegend"></div></div></div>
+    <div id="parcelDetail" class="parcel-detail" hidden>
+      <button id="closeDetail" class="detail-close" title="Zamknij" aria-label="Zamknij">×</button>
+      <div class="detail-overline">KARTA DZIAŁKI</div><div class="detail-heading"><div><h2 id="detailTitle">—</h2><span id="detailRegion">—</span></div><div id="detailSymbol" class="detail-symbol">▱</div></div>
+      <div class="detail-properties"><div><span>Powierzchnia</span><strong id="detailArea">—</strong></div><div><span>Identyfikator</span><strong id="detailId">—</strong></div></div>
+      <div class="detail-note">Dane wymagają weryfikacji w aktualnych rejestrach. Nie jest to analiza prawna ani wycena.</div>
+      <div class="detail-actions"><button id="detailAdd" class="button button-primary">Dodaj do wyboru</button><button id="detailZoom" class="button button-light">Przybliż</button></div>
+    </div>
+    <div id="mapStatus" class="map-status">Ładowanie mapy…</div>
+  </main>
+</div>
+<dialog id="helpDialog"><div class="dialog-head"><div><span class="eyebrow">INFORMACJE</span><h2>O mapie Biała Nida</h2></div><button id="helpClose" class="detail-close" aria-label="Zamknij">×</button></div><p>Panel WWW przygotowany na podstawie przekazanych danych mapy (układ v17) z archiwum GitHub Biała Nida, zawierającego 226 działek. Ortofotomapa lokalna 9000 × 6000 px pochodzi z tego samego archiwum. W publicznym zestawie danych nie umieszczono numerów ksiąg wieczystych, statusów prawnych, aktów notarialnych ani danych działek sąsiednich.</p><p>Powierzchnie pochodzą z przekazanego wykazu i nie są na nowo obliczane z geometrii. Warstwy Natura 2000 i podkład Geoportalu są pobierane z zewnętrznych usług i zależą od ich dostępności. Podkład HD jest lokalnym plikiem WebP.</p><p><b>Ważne:</b> obecność lub brak obszaru na warstwie tematycznej nie zastępuje urzędowych ustaleń planistycznych, badań środowiskowych ani sprawdzenia księgi wieczystej.</p><form method="dialog"><button class="button button-primary">Rozumiem</button></form></dialog>
+</body>
+</html>
