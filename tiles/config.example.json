@@ -1,0 +1,7 @@
+{
+  "enabled": true,
+  "extension": "png",
+  "minZoom": 12,
+  "maxZoom": 19,
+  "attribution": "Ortofotomapa lokalna — podać źródło i licencję"
+}
